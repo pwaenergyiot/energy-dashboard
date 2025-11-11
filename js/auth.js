@@ -1,11 +1,11 @@
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+     apiKey: "AIzaSyCK-pRuG2UBYzbzyg6NEoJqFeM9bVokKsU",
+  authDomain: "energy-dashboard-3phase.firebaseapp.com",
+  projectId: "energy-dashboard-3phase",
+  storageBucket: "energy-dashboard-3phase.firebasestorage.app",
+  messagingSenderId: "538942868301",
+  appId: "1:538942868301:web:e5075552648f5135a24504"
 };
 
 // Initialize Firebase
