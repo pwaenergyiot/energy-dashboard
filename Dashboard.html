@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Energy Dashboard - Smart 3-Phase</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-logout {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .warning-banner {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .warning-banner h3 {
+      color: #856404;
+      margin-bottom: 10px;
+    }
+
+    .error-banner {
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .error-banner h3 {
+      color: #721c24;
+      margin-bottom: 10px;
+    }
+
+    .phase-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      margin: 10px 0;
+    }
+
+    .phase-badge-1 {
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .phase-badge-3 {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      border-bottom: 2px solid #e0e0e0;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 1em;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.3s;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab:hover {
+      color: #667eea;
+    }
+
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+      font-size: 1.3em;
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 2em;
+      font-weight: bold;
+    }
+
+    .stat-unit {
+      font-size: 0.9em;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    .chart-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+
+    .chart-title {
+      font-size: 1.1em;
+      color: #333;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .control-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 500;
+      font-size: 0.9em;
+    }
+
+    .control-group input,
+    .control-group select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95em;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border-left: 4px solid #17a2b8;
+    }
+
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border-left: 4px solid #ffc107;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">⚡ Energy Dashboard</div>
+      <div class="user-info">
+        <span id="userEmail"></span>
+        <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Status Warning/Error -->
+    <div id="statusBanner" class="hidden"></div>
+
+    <!-- Phase Detection Section -->
+    <div class="section" id="phaseDetectionSection">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>กำลังตรวจสอบระบบ...</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Content (will be generated dynamically) -->
+    <div id="dashboardContent" class="hidden">
+      
+      <!-- Controls -->
+      <div class="section">
+        <div class="section-title">⚙️ การตั้งค่า</div>
+        
+        <div class="controls">
+          <div class="control-group">
+            <label for="startDate">วันที่เริ่มต้น:</label>
+            <input type="date" id="startDate">
+          </div>
+          
+          <div class="control-group">
+            <label for="endDate">วันที่สิ้นสุด:</label>
+            <input type="date" id="endDate">
+          </div>
+          
+          <div class="control-group">
+            <label for="solarStart">Solar Start (ชั่วโมง):</label>
+            <input type="number" id="solarStart" min="0" max="23" value="6">
+          </div>
+          
+          <div class="control-group">
+            <label for="solarEnd">Solar End (ชั่วโมง):</label>
+            <input type="number" id="solarEnd" min="0" max="23" value="18">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="loadData()">🔄 โหลดข้อมูล</button>
+        <button class="btn btn-secondary" onclick="window.location.href='settings.html'">⚙️ Settings</button>
+      </div>
+
+      <!-- Tabs (will be generated) -->
+      <div class="tabs" id="tabsContainer"></div>
+
+      <!-- Tab Contents (will be generated) -->
+      <div id="tabContents"></div>
+
+    </div>
+  </div>
+
+  <!-- Firebase & Chart.js -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <script>
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    
+    const CONFIG = {
+      firebase: {
+        apiKey: "AIzaSyCK-pRuG2UBYzbzyg6NEoJqFeM9bVokKsU",
+  	authDomain: "energy-dashboard-3phase.firebaseapp.com",
+  	projectId: "energy-dashboard-3phase",
+  	storageBucket: "energy-dashboard-3phase.firebasestorage.app",
+  	messagingSenderId: "538942868301",
+  	appId: "1:538942868301:web:e5075552648f5135a24504"
+      },
+      apiUrl: "https://script.google.com/macros/s/AKfycbyGkHgRv34rmHt0_SpMuBJALDkhxz48F5QZbaBrG6JHB2QspLga_vJXhx6zpA-cueb8yQ/exec"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(CONFIG.firebase);
+    const auth = firebase.auth();
+
+    // Global state
+    let currentPhaseInfo = null;
+    let currentData = null;
+    let charts = {};
+    let userStatus = null;
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      document.getElementById('userEmail').textContent = user.email;
+      
+      await checkUserStatus();
+    });
+
+    async function checkUserStatus() {
+      try {
+        const user = auth.currentUser;
+        const token = await user.getIdToken();
+        
+        const url = `${CONFIG.apiUrl}?action=getProfile&token=${token}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.success) {
+          showStatusBanner('error', 'ไม่สามารถตรวจสอบสถานะได้');
+          return;
+        }
+
+        userStatus = data.profile.status;
+
+        if (userStatus === 'pending') {
+          showStatusBanner('pending', 
+            '⏳ <strong>บัญชีของคุณกำลังรอการอนุมัติจาก Admin</strong><br>' +
+            'กรุณารอประมาณ 5-10 นาที แล้วลองเข้าสู่ระบบใหม่อีกครั้ง<br>' +
+            'คุณจะสามารถใช้งานได้เมื่อ Admin อนุมัติแล้ว'
+          );
+          hidePhaseDetection();
+          return;
+        }
+
+        if (userStatus === 'rejected') {
+          showStatusBanner('error', 
+            '❌ <strong>บัญชีของคุณถูกปฏิเสธ</strong><br>' +
+            'กรุณาติดต่อ Admin เพื่อสอบถามรายละเอียด'
+          );
+          hidePhaseDetection();
+          return;
+        }
+
+        // User is approved - proceed with phase detection
+        await detectPhases();
+
+      } catch (error) {
+        console.error('Error checking user status:', error);
+        showError('เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    function showStatusBanner(type, message) {
+      const banner = document.getElementById('statusBanner');
+      
+      if (type === 'pending') {
+        banner.className = 'warning-banner';
+      } else {
+        banner.className = 'error-banner';
+      }
+      
+      banner.innerHTML = message;
+      banner.classList.remove('hidden');
+    }
+
+    function hidePhaseDetection() {
+      document.getElementById('phaseDetectionSection').classList.add('hidden');
+    }
+
+    // ========================================
+    // PHASE DETECTION
+    // ========================================
+
+    async function detectPhases() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const token = await user.getIdToken();
+        const url = `${CONFIG.apiUrl}?action=detectPhases&token=${token}`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.success) {
+          showError('ไม่สามารถตรวจสอบระบบได้: ' + data.error);
+          return;
+        }
+
+        currentPhaseInfo = data;
+
+        // Build UI based on phase count
+        buildDashboardUI(data);
+        
+        // Set default dates
+        setDefaultDates();
+        
+        // Load initial data
+        await loadData();
+
+      } catch (error) {
+        console.error('Detect phases error:', error);
+        showError('เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    // ========================================
+    // UI BUILDING
+    // ========================================
+
+    function buildDashboardUI(phaseInfo) {
+      const detectionSection = document.getElementById('phaseDetectionSection');
+      
+      const phaseClass = phaseInfo.is3Phase ? 'phase-badge-3' : 'phase-badge-1';
+      const phaseText = phaseInfo.is3Phase ? '3 เฟส' : '1 เฟส';
+      
+      detectionSection.innerHTML = `
+        <div class="section-title">📊 ระบบของคุณ</div>
+        <div class="alert alert-info">
+          <strong>ระบบที่ตรวจพบ:</strong> 
+          <span class="phase-badge ${phaseClass}">${phaseText}</span><br>
+          <strong>Phases:</strong> ${phaseInfo.phases.join(', ')}<br>
+          <strong>Energy Data Sheets:</strong> ${phaseInfo.availableSheets.energy.join(', ')}
+        </div>
+      `;
+
+      // Show dashboard content
+      document.getElementById('dashboardContent').classList.remove('hidden');
+
+      // Build tabs
+      const tabsContainer = document.getElementById('tabsContainer');
+      const tabContents = document.getElementById('tabContents');
+
+      if (phaseInfo.is3Phase) {
+        // 3-phase system: Phase A, B, C, Total
+        tabsContainer.innerHTML = `
+          <button class="tab active" onclick="switchTab('phaseA')">Phase A</button>
+          <button class="tab" onclick="switchTab('phaseB')">Phase B</button>
+          <button class="tab" onclick="switchTab('phaseC')">Phase C</button>
+          <button class="tab" onclick="switchTab('total')">รวมทั้งหมด</button>
+        `;
+
+        tabContents.innerHTML = `
+          <div id="tab-phaseA" class="tab-content active"></div>
+          <div id="tab-phaseB" class="tab-content"></div>
+          <div id="tab-phaseC" class="tab-content"></div>
+          <div id="tab-total" class="tab-content"></div>
+        `;
+      } else {
+        // 1-phase system: Only Phase A
+        tabsContainer.innerHTML = `
+          <button class="tab active" onclick="switchTab('phaseA')">Phase A</button>
+        `;
+
+        tabContents.innerHTML = `
+          <div id="tab-phaseA" class="tab-content active"></div>
+        `;
+      }
+
+      // Create tab content structures
+      createTabContent('phaseA', 'Phase A');
+      if (phaseInfo.is3Phase) {
+        createTabContent('phaseB', 'Phase B');
+        createTabContent('phaseC', 'Phase C');
+        createTabContent('total', 'รวมทั้งหมด');
+      }
+    }
+
+    function createTabContent(tabId, title) {
+      const container = document.getElementById('tab-' + tabId);
+      
+      container.innerHTML = `
+        <!-- Statistics -->
+        <div class="stats-grid" id="stats-${tabId}">
+          <!-- Will be populated with data -->
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-container">
+          <div class="chart-title">📊 การใช้ไฟฟ้ารายชั่วโมง</div>
+          <canvas id="chart-hourly-${tabId}"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-title">📅 การใช้ไฟฟ้ารายวัน</div>
+          <canvas id="chart-daily-${tabId}"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-title">☀️ Solar Period Analysis</div>
+          <canvas id="chart-solar-${tabId}"></canvas>
+        </div>
+      `;
+    }
+
+    function switchTab(tabId) {
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Update tab contents
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    // ========================================
+    // DATA LOADING
+    // ========================================
+
+    async function loadData() {
+      if (userStatus !== 'approved') {
+        alert('คุณต้องได้รับการอนุมัติก่อนใช้งานฟีเจอร์นี้');
+        return;
+      }
+
+      try {
+        showLoading();
+
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const token = await user.getIdToken();
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const solarStart = document.getElementById('solarStart').value;
+        const solarEnd = document.getElementById('solarEnd').value;
+
+        if (!startDate || !endDate) {
+          alert('กรุณาเลือกวันที่');
+          hideLoading();
+          return;
+        }
+
+        let url;
+        if (currentPhaseInfo.is3Phase) {
+          url = `${CONFIG.apiUrl}?action=getData3Phase&token=${token}` +
+                `&startDate=${startDate}&endDate=${endDate}` +
+                `&solarStartHour=${solarStart}&solarEndHour=${solarEnd}`;
+        } else {
+          url = `${CONFIG.apiUrl}?action=getPhaseData&token=${token}` +
+                `&phase=A&startDate=${startDate}&endDate=${endDate}` +
+                `&solarStartHour=${solarStart}&solarEndHour=${solarEnd}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.success) {
+          showError('ไม่สามารถโหลดข้อมูลได้: ' + data.error);
+          hideLoading();
+          return;
+        }
+
+        currentData = data;
+
+        // Render data
+        if (currentPhaseInfo.is3Phase) {
+          renderPhaseData('phaseA', data.phaseA, 'Phase A');
+          renderPhaseData('phaseB', data.phaseB, 'Phase B');
+          renderPhaseData('phaseC', data.phaseC, 'Phase C');
+          renderPhaseData('total', data.total, 'Total');
+        } else {
+          renderPhaseData('phaseA', data.data, 'Phase A');
+        }
+
+        hideLoading();
+
+      } catch (error) {
+        console.error('Load data error:', error);
+        showError('เกิดข้อผิดพลาด: ' + error.message);
+        hideLoading();
+      }
+    }
+
+    // ========================================
+    // DATA RENDERING (same as original)
+    // ========================================
+
+    function renderPhaseData(tabId, phaseData, title) {
+      if (!phaseData) return;
+
+      // Render statistics
+      renderStats(tabId, phaseData);
+
+      // Render charts
+      renderHourlyChart(tabId, phaseData.hourlyData || []);
+      renderDailyChart(tabId, phaseData.dailyData || []);
+      
+      if (phaseData.solarData) {
+        renderSolarChart(tabId, phaseData.solarData.solarDaily || []);
+      }
+    }
+
+    function renderStats(tabId, phaseData) {
+      const container = document.getElementById('stats-' + tabId);
+      
+      const totalEnergy = phaseData.dailyData ? 
+        phaseData.dailyData.reduce((sum, d) => sum + d.energy, 0) : 
+        phaseData.totalEnergy || 0;
+      
+      const avgDaily = phaseData.dailyData && phaseData.dailyData.length > 0 ?
+        totalEnergy / phaseData.dailyData.length : 0;
+
+      container.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">พลังงานรวม</div>
+          <div class="stat-value">${totalEnergy.toFixed(2)}</div>
+          <div class="stat-unit">kWh</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">เฉลี่ยต่อวัน</div>
+          <div class="stat-value">${avgDaily.toFixed(2)}</div>
+          <div class="stat-unit">kWh/day</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">จำนวนข้อมูล</div>
+          <div class="stat-value">${phaseData.recordCount || 0}</div>
+          <div class="stat-unit">records</div>
+        </div>
+      `;
+    }
+
+    function renderHourlyChart(tabId, hourlyData) {
+      const ctx = document.getElementById('chart-hourly-' + tabId);
+      
+      if (charts['hourly-' + tabId]) {
+        charts['hourly-' + tabId].destroy();
+      }
+
+      const labels = hourlyData.map(d => d.date + ' ' + d.hour + ':00');
+      const values = hourlyData.map(d => d.energy);
+
+      charts['hourly-' + tabId] = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Energy (kWh)',
+            data: values,
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: true
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Energy (kWh)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderDailyChart(tabId, dailyData) {
+      const ctx = document.getElementById('chart-daily-' + tabId);
+      
+      if (charts['daily-' + tabId]) {
+        charts['daily-' + tabId].destroy();
+      }
+
+      const labels = dailyData.map(d => d.date);
+      const values = dailyData.map(d => d.energy);
+
+      charts['daily-' + tabId] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Energy (kWh)',
+            data: values,
+            backgroundColor: '#667eea'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: true
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Energy (kWh)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderSolarChart(tabId, solarDaily) {
+      const ctx = document.getElementById('chart-solar-' + tabId);
+      
+      if (charts['solar-' + tabId]) {
+        charts['solar-' + tabId].destroy();
+      }
+
+      const labels = solarDaily.map(d => d.date);
+      const values = solarDaily.map(d => d.solar);
+
+      charts['solar-' + tabId] = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Solar Period Energy (kWh)',
+            data: values,
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: true
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Energy (kWh)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+
+    function setDefaultDates() {
+      const today = new Date();
+      const lastMonth = new Date(today);
+      lastMonth.setDate(today.getDate() - 30);
+
+      document.getElementById('endDate').valueAsDate = today;
+      document.getElementById('startDate').valueAsDate = lastMonth;
+    }
+
+    function showLoading() {
+      document.getElementById('dashboardContent').style.opacity = '0.5';
+    }
+
+    function hideLoading() {
+      document.getElementById('dashboardContent').style.opacity = '1';
+    }
+
+    function showError(message) {
+      alert(message);
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html';
+      });
+    }
+  </script>
+</body>
+</html>

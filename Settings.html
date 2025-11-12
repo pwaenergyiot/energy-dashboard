@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚙️ Settings - Data Source Configuration</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 700px;
+      width: 100%;
+      padding: 40px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #667eea;
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 0.95em;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      margin: 10px 0;
+    }
+
+    .status-connected {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-disconnected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .phase-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin: 5px;
+    }
+
+    .phase-badge-1 {
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .phase-badge-3 {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px 0;
+    }
+
+    .section-title {
+      font-size: 1.1em;
+      color: #333;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      font-size: 0.9em;
+    }
+
+    .info-box p {
+      margin: 5px 0;
+    }
+
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 8px;
+    }
+
+    .warning-box h3 {
+      color: #856404;
+      margin-bottom: 10px;
+    }
+
+    .qr-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    #qr-reader {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin: 10px 0;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-disabled {
+      background: #cccccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    .btn-disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .input-group {
+      margin: 15px 0;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95em;
+      transition: border 0.3s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border-left: 4px solid #17a2b8;
+    }
+
+    .current-config {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .config-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .config-item:last-child {
+      border-bottom: none;
+    }
+
+    .config-label {
+      font-weight: 500;
+      color: #555;
+    }
+
+    .config-value {
+      color: #333;
+      font-size: 0.9em;
+      max-width: 60%;
+      word-break: break-all;
+    }
+
+    .phase-info {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .sheet-list {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 10px;
+    }
+
+    .sheet-list li {
+      margin: 5px 0;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      .config-value {
+        max-width: 50%;
+        font-size: 0.85em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>⚙️ การตั้งค่า</h1>
+      <p class="subtitle">เชื่อมต่อกับฐานข้อมูลของคุณ</p>
+      <div id="connectionStatus"></div>
+    </div>
+
+    <!-- User Status Warning -->
+    <div id="statusWarning" class="hidden"></div>
+
+    <!-- Current Configuration -->
+    <div class="section" id="currentConfigSection">
+      <div class="section-title">📊 การเชื่อมต่อปัจจุบัน</div>
+      <div class="current-config" id="currentConfig">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>กำลังตรวจสอบ...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Code Scanner Section -->
+    <div class="section" id="qrScanSection">
+      <div class="section-title">📷 สแกน QR Code</div>
+      
+      <div class="info-box">
+        <p><strong>วิธีใช้งาน:</strong></p>
+        <p>1. เปิด Google Sheet ของคุณ</p>
+        <p>2. สร้าง QR Code จาก URL ของ Sheet</p>
+        <p>3. คลิกปุ่ม "เปิดกล้อง" และสแกน QR Code</p>
+        <p>4. ระบบจะตรวจสอบว่าเป็นระบบ 1 เฟส หรือ 3 เฟส</p>
+      </div>
+
+      <div class="qr-container">
+        <div id="qr-reader" class="hidden"></div>
+      </div>
+
+      <button id="startScanBtn" class="btn btn-primary" onclick="startQrScan()">
+        📷 เปิดกล้องสแกน QR Code
+      </button>
+
+      <button id="stopScanBtn" class="btn btn-secondary hidden" onclick="stopQrScan()">
+        ⏹️ หยุดสแกน
+      </button>
+    </div>
+
+    <!-- Manual Input Section -->
+    <div class="section" id="manualInputSection">
+      <div class="section-title">⌨️ กรอก URL ด้วยมือ</div>
+      
+      <div class="input-group">
+        <label for="manualUrl">Google Sheet URL:</label>
+        <input 
+          type="text" 
+          id="manualUrl" 
+          placeholder="https://docs.google.com/spreadsheets/d/..."
+        >
+      </div>
+
+      <button id="testSaveBtn" class="btn btn-success" onclick="testAndSaveUrl()">
+        ✅ ทดสอบและบันทึก URL
+      </button>
+
+      <div class="info-box">
+        <p><strong>💡 ข้อกำหนด:</strong></p>
+        <p>• URL ต้องเป็น Google Sheets</p>
+        <p>• ต้องแชร์ Spreadsheet ให้ Script เข้าถึงได้</p>
+        <p><strong>สำหรับ 1 เฟส:</strong> ต้องมี Energy_Data_A</p>
+        <p><strong>สำหรับ 3 เฟส:</strong> ต้องมี Energy_Data_A/B/C</p>
+      </div>
+    </div>
+
+    <!-- Test Connection Result -->
+    <div class="section hidden" id="testResultSection">
+      <div class="section-title">🔍 ผลการทดสอบ</div>
+      <div id="testResult"></div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="alertContainer"></div>
+
+    <!-- Back to Dashboard -->
+    <div class="back-link">
+      <a href="dashboard.html">← กลับไปยัง Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Firebase & QR Scanner Libraries -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <script>
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    
+    const CONFIG = {
+      firebase: {
+        apiKey: "AIzaSyCK-pRuG2UBYzbzyg6NEoJqFeM9bVokKsU",
+  	authDomain: "energy-dashboard-3phase.firebaseapp.com",
+  	projectId: "energy-dashboard-3phase",
+  	storageBucket: "energy-dashboard-3phase.firebasestorage.app",
+  	messagingSenderId: "538942868301",
+  	appId: "1:538942868301:web:e5075552648f5135a24504"
+      },
+      apiUrl: "https://script.google.com/macros/s/AKfycbyGkHgRv34rmHt0_SpMuBJALDkhxz48F5QZbaBrG6JHB2QspLga_vJXhx6zpA-cueb8yQ/exec"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(CONFIG.firebase);
+    const auth = firebase.auth();
+    let html5QrCode = null;
+    let userStatus = null;
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      await checkUserStatus();
+    });
+
+    async function checkUserStatus() {
+      try {
+        const user = auth.currentUser;
+        const token = await user.getIdToken();
+        
+        const url = `${CONFIG.apiUrl}?action=getProfile&token=${token}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.success) {
+          showStatusWarning('error', 'ไม่สามารถตรวจสอบสถานะได้');
+          return;
+        }
+
+        userStatus = data.profile.status;
+
+        if (userStatus === 'pending') {
+          showStatusWarning('pending', 
+            '⏳ <strong>บัญชีของคุณกำลังรอการอนุมัติจาก Admin</strong><br>' +
+            'กรุณารอประมาณ 5-10 นาที แล้วลองเข้าสู่ระบบใหม่อีกครั้ง<br>' +
+            'คุณจะสามารถใช้งานได้เมื่อ Admin อนุมัติแล้ว'
+          );
+          disableAllFeatures();
+          return;
+        }
+
+        if (userStatus === 'rejected') {
+          showStatusWarning('error', 
+            '❌ <strong>บัญชีของคุณถูกปฏิเสธ</strong><br>' +
+            'กรุณาติดต่อ Admin เพื่อสอบถามรายละเอียด'
+          );
+          disableAllFeatures();
+          return;
+        }
+
+        // User is approved - load config
+        await loadCurrentConfig();
+
+      } catch (error) {
+        console.error('Error checking user status:', error);
+        showAlert('error', 'เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    function showStatusWarning(type, message) {
+      const warningDiv = document.getElementById('statusWarning');
+      
+      if (type === 'pending') {
+        warningDiv.innerHTML = `
+          <div class="warning-box">
+            ${message}
+          </div>
+        `;
+      } else {
+        warningDiv.innerHTML = `
+          <div class="alert alert-error">
+            ${message}
+          </div>
+        `;
+      }
+      
+      warningDiv.classList.remove('hidden');
+    }
+
+    function disableAllFeatures() {
+      // Disable QR scanner
+      const qrSection = document.getElementById('qrScanSection');
+      qrSection.style.opacity = '0.5';
+      qrSection.style.pointerEvents = 'none';
+
+      // Disable manual input
+      const manualSection = document.getElementById('manualInputSection');
+      manualSection.style.opacity = '0.5';
+      manualSection.style.pointerEvents = 'none';
+
+      // Update buttons
+      document.getElementById('startScanBtn').className = 'btn btn-disabled';
+      document.getElementById('testSaveBtn').className = 'btn btn-disabled';
+    }
+
+    // ========================================
+    // QR CODE SCANNER
+    // ========================================
+
+    function startQrScan() {
+      if (userStatus !== 'approved') {
+        showAlert('error', 'คุณต้องได้รับการอนุมัติก่อนใช้งานฟีเจอร์นี้');
+        return;
+      }
+
+      const qrReader = document.getElementById('qr-reader');
+      const startBtn = document.getElementById('startScanBtn');
+      const stopBtn = document.getElementById('stopScanBtn');
+
+      qrReader.classList.remove('hidden');
+      startBtn.classList.add('hidden');
+      stopBtn.classList.remove('hidden');
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+      
+      html5QrCode.start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 }
+        },
+        onScanSuccess,
+        onScanFailure
+      ).catch(err => {
+        showAlert('error', 'ไม่สามารถเปิดกล้องได้: ' + err);
+        stopQrScan();
+      });
+    }
+
+    function stopQrScan() {
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          html5QrCode.clear();
+          html5QrCode = null;
+        });
+      }
+
+      const qrReader = document.getElementById('qr-reader');
+      const startBtn = document.getElementById('startScanBtn');
+      const stopBtn = document.getElementById('stopScanBtn');
+
+      qrReader.classList.add('hidden');
+      startBtn.classList.remove('hidden');
+      stopBtn.classList.add('hidden');
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+      console.log('QR Code detected:', decodedText);
+      
+      stopQrScan();
+
+      if (decodedText.includes('docs.google.com/spreadsheets')) {
+        document.getElementById('manualUrl').value = decodedText;
+        showAlert('success', 'สแกน QR Code สำเร็จ! กำลังทดสอบการเชื่อมต่อ...');
+        
+        setTimeout(() => testAndSaveUrl(), 1000);
+      } else {
+        showAlert('error', 'QR Code นี้ไม่ใช่ Google Sheets URL');
+      }
+    }
+
+    function onScanFailure(error) {
+      // Ignore scan failures
+    }
+
+    // ========================================
+    // API FUNCTIONS
+    // ========================================
+
+    async function loadCurrentConfig() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const token = await user.getIdToken();
+        const url = `${CONFIG.apiUrl}?action=getSheetUrl&token=${token}`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const statusDiv = document.getElementById('connectionStatus');
+        const configDiv = document.getElementById('currentConfig');
+
+        if (data.success && data.hasSheet && data.sheetUrl) {
+          // Get phase info
+          const phaseUrl = `${CONFIG.apiUrl}?action=detectPhases&token=${token}`;
+          const phaseResponse = await fetch(phaseUrl);
+          const phaseData = await phaseResponse.json();
+
+          statusDiv.innerHTML = '<span class="status-badge status-connected">🟢 เชื่อมต่อแล้ว</span>';
+          
+          let phaseInfo = '';
+          if (phaseData.success) {
+            const phaseClass = phaseData.is3Phase ? 'phase-badge-3' : 'phase-badge-1';
+            const phaseText = phaseData.is3Phase ? '3 เฟส' : '1 เฟส';
+            phaseInfo = `<span class="phase-badge ${phaseClass}">${phaseText}</span>`;
+          }
+          
+          configDiv.innerHTML = `
+            <div class="config-item">
+              <span class="config-label">📊 Spreadsheet URL:</span>
+              <span class="config-value">${shortenUrl(data.sheetUrl)}</span>
+            </div>
+            <div class="config-item">
+              <span class="config-label">👤 อีเมล:</span>
+              <span class="config-value">${user.email}</span>
+            </div>
+            <div class="config-item">
+              <span class="config-label">⚡ ระบบ:</span>
+              <span class="config-value">${phaseInfo}</span>
+            </div>
+            <div class="config-item">
+              <span class="config-label">📅 สถานะ:</span>
+              <span class="config-value">✅ พร้อมใช้งาน</span>
+            </div>
+          `;
+
+          if (phaseData.success && phaseData.availableSheets) {
+            configDiv.innerHTML += `
+              <div class="phase-info">
+                <strong>📑 Sheets ที่พบ:</strong>
+                <div class="sheet-list">
+                  <ul>
+                    ${phaseData.availableSheets.energy.map(s => '<li>✓ ' + s + '</li>').join('')}
+                    ${phaseData.availableSheets.hourly.map(s => '<li>✓ ' + s + '</li>').join('')}
+                  </ul>
+                </div>
+              </div>
+            `;
+          }
+
+          document.getElementById('manualUrl').value = data.sheetUrl;
+        } else {
+          statusDiv.innerHTML = '<span class="status-badge status-disconnected">🔴 ยังไม่ได้เชื่อมต่อ</span>';
+          
+          configDiv.innerHTML = `
+            <div class="alert alert-info">
+              <strong>ℹ️ ยังไม่ได้กำหนดฐานข้อมูล</strong><br>
+              กรุณาสแกน QR Code หรือกรอก URL เพื่อเชื่อมต่อกับ Google Sheet ของคุณ
+            </div>
+          `;
+        }
+
+      } catch (error) {
+        console.error('Load config error:', error);
+        showAlert('error', 'ไม่สามารถโหลดการตั้งค่าได้: ' + error.message);
+      }
+    }
+
+    async function testAndSaveUrl() {
+      if (userStatus !== 'approved') {
+        showAlert('error', 'คุณต้องได้รับการอนุมัติก่อนใช้งานฟีเจอร์นี้');
+        return;
+      }
+
+      const urlInput = document.getElementById('manualUrl');
+      const sheetUrl = urlInput.value.trim();
+
+      if (!sheetUrl) {
+        showAlert('error', 'กรุณากรอก URL');
+        return;
+      }
+
+      if (!sheetUrl.includes('docs.google.com/spreadsheets')) {
+        showAlert('error', 'URL ไม่ถูกต้อง ต้องเป็น Google Sheets URL');
+        return;
+      }
+
+      showAlert('info', '🔄 กำลังทดสอบการเชื่อมต่อ...');
+
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          showAlert('error', 'กรุณาเข้าสู่ระบบ');
+          return;
+        }
+
+        const token = await user.getIdToken();
+
+        // Test access
+        const testUrl = `${CONFIG.apiUrl}?action=testSheetAccess&token=${token}&sheetUrl=${encodeURIComponent(sheetUrl)}`;
+        const testResponse = await fetch(testUrl);
+        const testData = await testResponse.json();
+
+        if (!testData.success) {
+          showAlert('error', '❌ ไม่สามารถเข้าถึง Spreadsheet: ' + testData.error);
+          
+          document.getElementById('testResultSection').classList.remove('hidden');
+          document.getElementById('testResult').innerHTML = `
+            <div class="alert alert-error">
+              <strong>❌ การทดสอบล้มเหลว</strong><br>
+              ${testData.error}<br><br>
+              <strong>วิธีแก้ไข:</strong><br>
+              1. เปิด Google Sheet ของคุณ<br>
+              2. คลิก "Share" มุมขวาบน<br>
+              3. ตั้งค่าเป็น "Anyone with the link" หรือแชร์ให้ Script Email<br>
+              4. ลองอีกครั้ง
+            </div>
+          `;
+          return;
+        }
+
+        // Show test results with phase detection
+        const phaseClass = testData.is3Phase ? 'phase-badge-3' : 'phase-badge-1';
+        const phaseText = testData.is3Phase ? '3 เฟส' : '1 เฟส';
+
+        document.getElementById('testResultSection').classList.remove('hidden');
+        document.getElementById('testResult').innerHTML = `
+          <div class="alert alert-success">
+            <strong>✅ การทดสอบสำเร็จ!</strong><br><br>
+            📊 <strong>Spreadsheet:</strong> ${testData.spreadsheetName}<br>
+            ⚡ <strong>ระบบ:</strong> <span class="phase-badge ${phaseClass}">${phaseText}</span><br>
+            📑 <strong>Phases:</strong> ${testData.phases ? testData.phases.join(', ') : 'A'}<br>
+            <br>
+            <strong>Energy Data Sheets:</strong><br>
+            ${testData.availableSheets.energy.map(s => '• ' + s).join('<br>')}<br>
+            <br>
+            <strong>Hourly Data Sheets:</strong><br>
+            ${testData.availableSheets.hourly.length > 0 ? 
+              testData.availableSheets.hourly.map(s => '• ' + s).join('<br>') : 
+              '• จะ aggregate จาก Energy Data'}
+          </div>
+        `;
+
+        // Save URL
+        const saveUrl = `${CONFIG.apiUrl}?action=saveSheetUrl&token=${token}&sheetUrl=${encodeURIComponent(sheetUrl)}`;
+        const saveResponse = await fetch(saveUrl);
+        const saveData = await saveResponse.json();
+
+        if (saveData.success) {
+          showAlert('success', '✅ บันทึกการตั้งค่าสำเร็จ! กำลังรีเฟรช...');
+          
+          setTimeout(() => {
+            loadCurrentConfig();
+            document.getElementById('testResultSection').classList.add('hidden');
+          }, 2000);
+        } else {
+          showAlert('error', 'ไม่สามารถบันทึกได้: ' + saveData.error);
+        }
+
+      } catch (error) {
+        console.error('Test/Save error:', error);
+        showAlert('error', 'เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+
+    function shortenUrl(url) {
+      if (url.length > 50) {
+        return url.substring(0, 50) + '...';
+      }
+      return url;
+    }
+
+    function showAlert(type, message) {
+      const container = document.getElementById('alertContainer');
+      const alertClass = type === 'success' ? 'alert-success' : 
+                         type === 'error' ? 'alert-error' : 'alert-info';
+      
+      container.innerHTML = `
+        <div class="alert ${alertClass}">
+          ${message}
+        </div>
+      `;
+
+      setTimeout(() => {
+        container.innerHTML = '';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

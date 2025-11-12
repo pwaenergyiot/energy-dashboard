@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>👨‍💼 Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header h1 {
+      color: #667eea;
+      font-size: 1.8em;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn-logout {
+      background: #6c757d;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-logout:hover {
+      background: #5a6268;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #666;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .card-title {
+      font-size: 1.3em;
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 2.5em;
+      font-weight: bold;
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .user-table th {
+      background: #f8f9fa;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #555;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .user-table td {
+      padding: 15px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .user-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .provider-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: 600;
+      background: #e7f3ff;
+      color: #004085;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9em;
+      transition: all 0.3s;
+      margin: 0 5px;
+    }
+
+    .btn-approve {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-approve:hover {
+      background: #218838;
+    }
+
+    .btn-reject {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-reject:hover {
+      background: #c82333;
+    }
+
+    .btn-view {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-view:hover {
+      background: #138496;
+    }
+
+    .btn-refresh {
+      background: #667eea;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+    }
+
+    .btn-refresh:hover {
+      background: #5568d3;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state i {
+      font-size: 4em;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border-left: 4px solid #17a2b8;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .user-table {
+        font-size: 0.9em;
+      }
+
+      .user-table th,
+      .user-table td {
+        padding: 10px 8px;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        font-size: 0.85em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>👨‍💼 Admin Dashboard</h1>
+      <div class="user-info">
+        <span id="adminEmail"></span>
+        <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('pending')">
+        🔔 Pending Approvals
+      </button>
+      <button class="tab-btn" onclick="switchTab('all')">
+        👥 All Users
+      </button>
+      <button class="tab-btn" onclick="switchTab('stats')">
+        📊 Statistics
+      </button>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer"></div>
+
+    <!-- Pending Users Tab -->
+    <div id="pending-tab" class="tab-content active">
+      <div class="card">
+        <div class="card-title">
+          🔔 รอการอนุมัติ
+          <button class="btn-refresh" onclick="loadPendingUsers()" style="float: right;">
+            🔄 รีเฟรช
+          </button>
+        </div>
+        
+        <div id="pendingUsersContainer">
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>กำลังโหลดข้อมูล...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Users Tab -->
+    <div id="all-tab" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          👥 ผู้ใช้ทั้งหมด
+          <button class="btn-refresh" onclick="loadAllUsers()" style="float: right;">
+            🔄 รีเฟรช
+          </button>
+        </div>
+        
+        <div id="allUsersContainer">
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>กำลังโหลดข้อมูล...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Tab -->
+    <div id="stats-tab" class="tab-content">
+      <div class="card">
+        <div class="card-title">📊 สถิติระบบ</div>
+        
+        <div class="stats-grid" id="statsContainer">
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>กำลังโหลดข้อมูล...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+  <script>
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    
+    const CONFIG = {
+      firebase: {
+        	apiKey: "AIzaSyCK-pRuG2UBYzbzyg6NEoJqFeM9bVokKsU",
+  	authDomain: "energy-dashboard-3phase.firebaseapp.com",
+  	projectId: "energy-dashboard-3phase",
+  	storageBucket: "energy-dashboard-3phase.firebasestorage.app",
+  	messagingSenderId: "538942868301",
+  	appId: "1:538942868301:web:e5075552648f5135a24504"
+      },
+      apiUrl: "https://script.google.com/macros/s/AKfycbyGkHgRv34rmHt0_SpMuBJALDkhxz48F5QZbaBrG6JHB2QspLga_vJXhx6zpA-cueb8yQ/exec"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(CONFIG.firebase);
+    const auth = firebase.auth();
+
+    // Global state
+    let currentToken = null;
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentToken = await user.getIdToken();
+      document.getElementById('adminEmail').textContent = user.email;
+
+      // Check if user is admin
+      const profileUrl = `${CONFIG.apiUrl}?action=getProfile&token=${currentToken}`;
+      const response = await fetch(profileUrl);
+      const data = await response.json();
+
+      if (!data.success || !data.profile.isAdmin) {
+        alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      // Load initial data
+      loadPendingUsers();
+    });
+
+    // ========================================
+    // TAB MANAGEMENT
+    // ========================================
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Remove active from all buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Show selected tab
+      document.getElementById(tabName + '-tab').classList.add('active');
+      event.target.classList.add('active');
+
+      // Load data
+      if (tabName === 'pending') {
+        loadPendingUsers();
+      } else if (tabName === 'all') {
+        loadAllUsers();
+      } else if (tabName === 'stats') {
+        loadStats();
+      }
+    }
+
+    // ========================================
+    // DATA LOADING
+    // ========================================
+
+    async function loadPendingUsers() {
+      try {
+        const container = document.getElementById('pendingUsersContainer');
+        container.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>';
+
+        const url = `${CONFIG.apiUrl}?action=getPendingUsers&token=${currentToken}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.success) {
+          container.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
+          return;
+        }
+
+        if (data.users.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div style="font-size: 4em; margin-bottom: 20px;">✅</div>
+              <h3>ไม่มีผู้ใช้ที่รอการอนุมัติ</h3>
+              <p>ผู้ใช้ทั้งหมดได้รับการอนุมัติแล้ว</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = `
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>อีเมล</th>
+                <th>ชื่อ</th>
+                <th>Provider</th>
+                <th>วันที่ลงทะเบียน</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        data.users.forEach(user => {
+          html += `
+            <tr>
+              <td>${user.email}</td>
+              <td>${user.displayName || '-'}</td>
+              <td>
+                <span class="provider-badge">
+                  ${user.provider === 'google.com' ? '🔵 Google' : '📧 Email'}
+                </span>
+              </td>
+              <td>${formatDate(user.createdAt)}</td>
+              <td>
+                <button class="btn btn-approve" onclick="approveUser('${user.email}')">
+                  ✅ อนุมัติ
+                </button>
+                <button class="btn btn-reject" onclick="rejectUser('${user.email}')">
+                  ❌ ปฏิเสธ
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+
+      } catch (error) {
+        console.error('Error loading pending users:', error);
+        showAlert('error', 'เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    async function loadAllUsers() {
+      try {
+        const container = document.getElementById('allUsersContainer');
+        container.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>';
+
+        const url = `${CONFIG.apiUrl}?action=getAllUsers&token=${currentToken}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.success) {
+          container.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
+          return;
+        }
+
+        let html = `
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>อีเมล</th>
+                <th>ชื่อ</th>
+                <th>Provider</th>
+                <th>สถานะ</th>
+                <th>Sheet</th>
+                <th>Login ล่าสุด</th>
+                <th>อนุมัติโดย</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        data.users.forEach(user => {
+          const statusClass = user.status === 'pending' ? 'status-pending' : 
+                             user.status === 'approved' ? 'status-approved' : 'status-rejected';
+          
+          html += `
+            <tr>
+              <td>${user.email}</td>
+              <td>${user.displayName || '-'}</td>
+              <td>
+                <span class="provider-badge">
+                  ${user.provider === 'google.com' ? '🔵 Google' : '📧 Email'}
+                </span>
+              </td>
+              <td>
+                <span class="status-badge ${statusClass}">
+                  ${user.status.toUpperCase()}
+                </span>
+              </td>
+              <td>${user.hasSheet ? '✅' : '❌'}</td>
+              <td>${formatDate(user.lastLogin)}</td>
+              <td>${user.approvedBy || '-'}</td>
+            </tr>
+          `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+
+      } catch (error) {
+        console.error('Error loading all users:', error);
+        showAlert('error', 'เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const container = document.getElementById('statsContainer');
+        container.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>';
+
+        const url = `${CONFIG.apiUrl}?action=getAllUsers&token=${currentToken}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.success) {
+          container.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
+          return;
+        }
+
+        const pending = data.users.filter(u => u.status === 'pending').length;
+        const approved = data.users.filter(u => u.status === 'approved').length;
+        const rejected = data.users.filter(u => u.status === 'rejected').length;
+        const hasSheet = data.users.filter(u => u.hasSheet).length;
+
+        container.innerHTML = `
+          <div class="stat-card">
+            <div class="stat-label">รอการอนุมัติ</div>
+            <div class="stat-value">${pending}</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-label">อนุมัติแล้ว</div>
+            <div class="stat-value">${approved}</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-label">ปฏิเสธ</div>
+            <div class="stat-value">${rejected}</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-label">เชื่อมต่อ Sheet แล้ว</div>
+            <div class="stat-value">${hasSheet}</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-label">ผู้ใช้ทั้งหมด</div>
+            <div class="stat-value">${data.users.length}</div>
+          </div>
+        `;
+
+      } catch (error) {
+        console.error('Error loading stats:', error);
+        showAlert('error', 'เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    // ========================================
+    // USER ACTIONS
+    // ========================================
+
+    async function approveUser(email) {
+      if (!confirm(`คุณต้องการอนุมัติผู้ใช้ ${email} หรือไม่?`)) {
+        return;
+      }
+
+      try {
+        const url = `${CONFIG.apiUrl}?action=approveUser&token=${currentToken}&email=${encodeURIComponent(email)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert('success', `อนุมัติผู้ใช้ ${email} สำเร็จ!`);
+          loadPendingUsers();
+        } else {
+          showAlert('error', 'เกิดข้อผิดพลาด: ' + data.error);
+        }
+      } catch (error) {
+        console.error('Error approving user:', error);
+        showAlert('error', 'เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    async function rejectUser(email) {
+      if (!confirm(`คุณต้องการปฏิเสธผู้ใช้ ${email} หรือไม่?`)) {
+        return;
+      }
+
+      try {
+        const url = `${CONFIG.apiUrl}?action=rejectUser&token=${currentToken}&email=${encodeURIComponent(email)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert('success', `ปฏิเสธผู้ใช้ ${email} แล้ว`);
+          loadPendingUsers();
+        } else {
+          showAlert('error', 'เกิดข้อผิดพลาด: ' + data.error);
+        }
+      } catch (error) {
+        console.error('Error rejecting user:', error);
+        showAlert('error', 'เกิดข้อผิดพลาด: ' + error.message);
+      }
+    }
+
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return date.toLocaleString('th-TH', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function showAlert(type, message) {
+      const container = document.getElementById('alertContainer');
+      const alertClass = type === 'success' ? 'alert-success' : 
+                         type === 'error' ? 'alert-error' : 'alert-info';
+      
+      container.innerHTML = `
+        <div class="alert ${alertClass}">
+          ${message}
+        </div>
+      `;
+
+      setTimeout(() => {
+        container.innerHTML = '';
+      }, 5000);
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html';
+      });
+    }
+  </script>
+</body>
+</html>
