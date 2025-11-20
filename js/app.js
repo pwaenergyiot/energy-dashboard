@@ -4,7 +4,7 @@
 
 // API Configuration
 const API_CONFIG = {
-    apiUrl: "YOUR_WEB_APP_URL" // ⚠️ แก้ไข URL นี้ให้ตรงกับ Backend Web App URL
+    apiUrl: "https://script.google.com/macros/s/AKfycbyGkHgRv34rmHt0_SpMuBJALDkhxz48F5QZbaBrG6JHB2QspLga_vJXhx6zpA-cueb8yQ/exec" // ⚠️ แก้ไข URL นี้ให้ตรงกับ Backend Web App URL
 };
 
 // Global state
